@@ -17,24 +17,24 @@ const server = http.createServer(app);
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
-    process.env.CLIENT_URL
-].filter(Boolean);
+    process.env.CLIENT_URL,
+    process.env.CLIENT_URL?.replace(/\/$/, ''), // Remove trailing slash if exists
+].filter(Boolean) as string[];
 
 const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin) || origin.startsWith('http://localhost')) {
+        const normalizedOrigin = origin.replace(/\/$/, '');
+        const isAllowed = allowedOrigins.some(allowed =>
+            allowed === '*' || allowed.replace(/\/$/, '') === normalizedOrigin
+        );
+
+        if (isAllowed || origin.startsWith('http://localhost')) {
             callback(null, true);
         } else {
-            // In production, we can be more specific, but for now let's allow it 
-            // if we haven't set a specific CLIENT_URL yet
-            if (process.env.CLIENT_URL === '*') {
-                callback(null, true);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
+            console.error(`CORS Blocked: Origin "${origin}" not in allowed list:`, allowedOrigins);
+            callback(new Error('Not allowed by CORS'));
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
