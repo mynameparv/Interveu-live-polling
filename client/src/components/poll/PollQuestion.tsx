@@ -7,11 +7,12 @@ interface PollQuestionProps {
     poll: Poll;
     onSubmitVote: (optionIndex: number) => void;
     isSubmitting: boolean;
+    offset?: number;
 }
 
-export const PollQuestion: React.FC<PollQuestionProps> = ({ poll, onSubmitVote, isSubmitting }) => {
+export const PollQuestion: React.FC<PollQuestionProps> = ({ poll, onSubmitVote, isSubmitting, offset = 0 }) => {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
-    const { formattedTime, isExpired } = usePollTimer(poll.endsAt);
+    const { formattedTime, isExpired } = usePollTimer(poll.endsAt, offset);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

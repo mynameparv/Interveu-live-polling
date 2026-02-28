@@ -6,15 +6,15 @@ interface TimerResult {
     formattedTime: string;
 }
 
-export const usePollTimer = (endsAt: string | null): TimerResult => {
+export const usePollTimer = (endsAt: string | null, offset: number = 0): TimerResult => {
     const [remainingSeconds, setRemainingSeconds] = useState(0);
 
     const calculateRemaining = useCallback(() => {
         if (!endsAt) return 0;
         const end = new Date(endsAt).getTime();
-        const now = Date.now();
+        const now = Date.now() + offset;
         return Math.max(0, Math.floor((end - now) / 1000));
-    }, [endsAt]);
+    }, [endsAt, offset]);
 
     useEffect(() => {
         if (!endsAt) {

@@ -14,9 +14,16 @@ export const usePollState = () => {
     const [activePoll, setActivePoll] = useState<Poll | null>(null);
     const [phase, setPhase] = useState<PollStatePhase>('idle');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [offset, setOffset] = useState(0);
 
     // Directly sets the poll state - useful for recovery
-    const syncState = useCallback((poll: Poll | null, hasVoted: boolean) => {
+    const syncState = useCallback((poll: Poll | null, hasVoted: boolean, serverTime?: string) => {
+        if (serverTime) {
+            const serverMillis = new Date(serverTime).getTime();
+            const clientMillis = Date.now();
+            setOffset(serverMillis - clientMillis);
+        }
+
         setActivePoll(poll);
         if (!poll) {
             setPhase('idle');
@@ -33,12 +40,14 @@ export const usePollState = () => {
         if (!socket) return;
 
         socket.on('poll:new', (poll: PollNewEvent) => {
+            setOffset(0); // Reset offset on new poll, if drift is minimal
             setActivePoll(poll);
             setPhase('active');
             showToast('A new poll has started!', 'info');
         });
 
         socket.on('poll:created', (poll: PollCreatedEvent) => {
+            setOffset(0);
             setActivePoll(poll);
             // Teacher views live results immediately which is technically 'voted' phase view or a special 'live' view
             // We will handle 'teacher' viewing 'active' vs 'student' viewing 'active'.
@@ -101,6 +110,7 @@ export const usePollState = () => {
         activePoll,
         phase,
         isSubmitting,
+        offset,
         createPoll,
         vote,
         syncState

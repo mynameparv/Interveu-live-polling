@@ -3,7 +3,7 @@ import { useSocketContext } from '../context/SocketContext';
 import { useUser } from '../context/UserContext';
 import { StateRecoveredEvent } from '../types';
 
-export const useStateRecovery = (syncState: (poll: any, hasVoted: boolean) => void) => {
+export const useStateRecovery = (syncState: (poll: any, hasVoted: boolean, serverTime?: string) => void) => {
     const { socket, isConnected } = useSocketContext();
     const { user } = useUser();
     const [isRecovering, setIsRecovering] = useState(true);
@@ -23,7 +23,7 @@ export const useStateRecovery = (syncState: (poll: any, hasVoted: boolean) => vo
         setIsRecovering(true);
 
         const handleStateRecovered = (data: StateRecoveredEvent) => {
-            syncState(data.activePoll, data.hasVoted);
+            syncState(data.activePoll, data.hasVoted, data.serverTime);
             setIsRecovering(false);
         };
 

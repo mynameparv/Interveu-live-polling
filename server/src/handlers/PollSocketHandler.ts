@@ -21,6 +21,19 @@ export const handlePollSockets = (io: Server) => {
                     const students = await SessionService.getActiveStudents();
                     io.emit('participants:update', students);
                 }
+
+                // Automatically send state to new joiner
+                const activePoll = await PollService.getActivePoll();
+                let hasVoted = false;
+                if (session.role === 'student' && activePoll) {
+                    hasVoted = await VoteService.hasVoted(String(activePoll._id), data.sessionId);
+                }
+
+                socket.emit('state:recovered', {
+                    activePoll,
+                    hasVoted,
+                    serverTime: new Date().toISOString()
+                });
             } catch (error) {
                 console.error('Session join error', error);
             }
@@ -41,7 +54,8 @@ export const handlePollSockets = (io: Server) => {
 
                 socket.emit('state:recovered', {
                     activePoll,
-                    hasVoted
+                    hasVoted,
+                    serverTime: new Date().toISOString()
                 });
 
             } catch (error) {

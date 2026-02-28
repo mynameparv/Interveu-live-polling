@@ -5,10 +5,11 @@ import { usePollTimer } from '../../hooks/usePollTimer';
 interface PollResultsProps {
     poll: Poll;
     showTimer?: boolean;
+    offset?: number;
 }
 
-export const PollResults: React.FC<PollResultsProps> = ({ poll, showTimer = false }) => {
-    const { formattedTime, isExpired } = usePollTimer(poll.endsAt);
+export const PollResults: React.FC<PollResultsProps> = ({ poll, showTimer = false, offset = 0 }) => {
+    const { formattedTime, isExpired } = usePollTimer(poll.endsAt, offset);
 
     // Calculate highest vote count to highlight the winner
     let maxVotes = 0;

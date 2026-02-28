@@ -11,7 +11,7 @@ import { ChatPopup } from '../components/common/ChatPopup';
 export const StudentDashboard: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useUser();
-    const { activePoll, phase, isSubmitting, vote, syncState } = usePollState();
+    const { activePoll, phase, isSubmitting, vote, syncState, offset } = usePollState();
     const { isRecovering } = useStateRecovery(syncState);
 
     useEffect(() => {
@@ -39,10 +39,11 @@ export const StudentDashboard: React.FC = () => {
                         poll={activePoll}
                         onSubmitVote={(optionIndex) => vote(activePoll._id, optionIndex)}
                         isSubmitting={isSubmitting}
+                        offset={offset}
                     />
                 ) : phase === 'voted' && activePoll ? (
                     <div className="w-full text-center">
-                        <PollResults poll={activePoll} showTimer={true} />
+                        <PollResults poll={activePoll} showTimer={true} offset={offset} />
                         <h3 className="text-xl font-bold text-text-dark mt-8 animate-fade-in">Wait for the teacher to ask a new question..</h3>
                     </div>
                 ) : (

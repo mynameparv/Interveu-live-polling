@@ -15,7 +15,7 @@ import { Poll } from '../types';
 export const TeacherDashboard: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useUser();
-    const { activePoll, phase, createPoll, syncState } = usePollState();
+    const { activePoll, phase, createPoll, syncState, offset } = usePollState();
     const { isRecovering } = useStateRecovery(syncState);
 
     const [showHistory, setShowHistory] = useState(false);
@@ -81,7 +81,7 @@ export const TeacherDashboard: React.FC = () => {
                     </div>
                 ) : phase === 'active' && activePoll ? (
                     <div className="w-full text-center">
-                        <PollResults poll={activePoll} showTimer={true} />
+                        <PollResults poll={activePoll} showTimer={true} offset={offset} />
                         <div className="mt-8 flex justify-center">
                             <Button onClick={() => syncState(null, false)}>+ Ask a new question</Button>
                         </div>

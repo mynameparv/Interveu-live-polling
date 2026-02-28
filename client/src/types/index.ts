@@ -41,6 +41,7 @@ export interface PollCompletedEvent extends Poll { }
 export interface StateRecoveredEvent {
     activePoll: Poll | null;
     hasVoted: boolean;
+    serverTime?: string;
 }
 
 // API Responses
