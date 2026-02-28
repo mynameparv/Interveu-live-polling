@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { Button } from '../components/common/Button';
 
 export const LandingPage: React.FC = () => {
     const navigate = useNavigate();
