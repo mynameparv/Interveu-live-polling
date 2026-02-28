@@ -67,28 +67,29 @@ Duplicate or spam submissions are prevented server-side.
 
 ---
 
-## 🏗️ Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
-- React (Hooks + TypeScript)
-- Socket.io Client
+- ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+- ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+- ![Socket.io Client](https://img.shields.io/badge/Socket.io-Client-black?style=for-the-badge&logo=socket.io&logoColor=white)
 
 ### Backend
-- Node.js
-- Express
-- Socket.io
-- TypeScript
+- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+- ![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+- ![Socket.io](https://img.shields.io/badge/Socket.io-Server-black?style=for-the-badge&logo=socket.io&logoColor=white)
+- ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
 ### Database
-- MongoDB / PostgreSQL
+- ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+
 
 ### Deployment
-- Frontend: 
-- Backend:
-
----
+- Frontend: Vercel
+- Backend: Railway
 
 ## 📂 Project Structure
+```text
 live-polling-system/
 │
 ├── backend/
@@ -114,3 +115,4 @@ live-polling-system/
 │
 ├── README.md
 └── package.json
+```
