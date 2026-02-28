@@ -14,27 +14,34 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+console.log('Production CLIENT_URL configured as:', process.env.CLIENT_URL);
+
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
     process.env.CLIENT_URL,
-    process.env.CLIENT_URL?.replace(/\/$/, ''), // Remove trailing slash if exists
 ].filter(Boolean) as string[];
 
 const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Skip check if no origin (non-browser)
         if (!origin) return callback(null, true);
 
-        const normalizedOrigin = origin.replace(/\/$/, '');
-        const isAllowed = allowedOrigins.some(allowed =>
-            allowed === '*' || allowed.replace(/\/$/, '') === normalizedOrigin
-        );
+        // Clean the incoming origin and the expected origin
+        const normalizedOrigin = origin.trim().replace(/\/$/, '').toLowerCase();
+
+        const isAllowed = allowedOrigins.some(allowed => {
+            if (!allowed) return false;
+            if (allowed === '*') return true;
+            return allowed.trim().replace(/\/$/, '').toLowerCase() === normalizedOrigin;
+        });
 
         if (isAllowed || origin.startsWith('http://localhost')) {
             callback(null, true);
         } else {
-            console.error(`CORS Blocked: Origin "${origin}" not in allowed list:`, allowedOrigins);
-            callback(new Error('Not allowed by CORS'));
+            console.error(`CORS REJECTED: "${normalizedOrigin}" is NOT in:`, allowedOrigins);
+            // Pass null, false instead of an Error to avoid 500 Internal Server Error
+            callback(null, false);
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
