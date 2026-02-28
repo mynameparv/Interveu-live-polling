@@ -24,11 +24,13 @@ export class PollController {
     static async checkMyVote(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { sessionId } = req.query;
-            if (!sessionId) {
+            const sessionId = req.query.sessionId;
+
+            if (typeof sessionId !== 'string') {
                 return res.status(400).json({ error: 'Session ID is required' });
             }
-            const hasVoted = await VoteService.hasVoted(id, sessionId as string);
+
+            const hasVoted = await VoteService.hasVoted(id as string, sessionId as string);
             res.json({ hasVoted });
         } catch (error: any) {
             res.status(500).json({ error: error.message });
