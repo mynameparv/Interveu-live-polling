@@ -14,14 +14,27 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Get client URL from env or use default local dev port
-// Update CORS for flexible local ports
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    process.env.CLIENT_URL
+].filter(Boolean);
+
 const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        if (!origin || origin.startsWith('http://localhost') || origin === process.env.CLIENT_URL) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin) || origin.startsWith('http://localhost')) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            // In production, we can be more specific, but for now let's allow it 
+            // if we haven't set a specific CLIENT_URL yet
+            if (process.env.CLIENT_URL === '*') {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -37,17 +50,7 @@ connectDB();
 
 // Setup Socket.io
 const io = new Server(server, {
-    cors: {
-        origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-            if (!origin || origin.startsWith('http://localhost') || origin === process.env.CLIENT_URL) {
-                callback(null, true);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
-        methods: ["GET", "POST"],
-        credentials: true,
-    },
+    cors: corsOptions,
 });
 
 TimerService.setIoInstance(io);
