@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { SOCKET_URL } from '../utils/constants';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 
 interface SocketContextType {
@@ -14,6 +15,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const { user, logout } = useUser();
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Only connect if user has logged in (name and role exist) or if they just selected a role?
@@ -42,7 +44,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
         newSocket.on('session:kicked', () => {
             logout();
-            window.location.href = '/kicked-out';
+            navigate('/kicked-out');
         });
 
         return () => {
